@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+set -eu
+exec 2>&1
+
+CMD=/usr/sbin/nginx
+PID=/run/nginx/nginx.pid
+
+install -d -o nginx -g nginx ${PID%/*}
+
+${CMD} -t -q || exit 0
+
+exec ${CMD} -g "pid $PID; daemon off;"
