@@ -65,6 +65,7 @@ printf "\\n"
 BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 cmdBuilt="docker build"
+cmdBuilt+=" --build-arg BUILD_DATE=$BUILD_DATE"
 if [[ ! -z $ARCH ]]; then
 	cmdBuilt+=" --build-arg ARCH=$ARCH"
 fi

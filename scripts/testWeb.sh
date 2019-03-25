@@ -56,7 +56,7 @@ logSubTitle "Getting published TCP port on host"
 webPort=$(docker port nginx-php-fpm-test 80/tcp |cut -d ':' -f2)
 if [[ -z $webPort ]]; then
 	logError "Error: unable to find published port"
-	logDetail "Docker port output: `docker port nginx-php-fpm-test`"
+	logDetail "Docker port output: $(docker port nginx-php-fpm-test)"
 	logError "Aborting..."
 	cleanup
 	exit 1;
