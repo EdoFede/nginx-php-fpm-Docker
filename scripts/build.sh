@@ -2,9 +2,10 @@
 set -e
 
 source scripts/multiArchMatrix.sh
+source scripts/logger.sh
 
 showHelp() {
-	echo "Usage: $0 -i <image name> -t <tag name> -a <target arch> -b <baseimage branch> -v <version> -r <vcs reference> -g <github token>"
+	echo "Usage: $0 -i <Image name> -t <Tag name> -a <Target architecture> -b <Baseimage branch> -v <version> -r <VCS reference> -g <GitHub auth token>"
 }
 
 while getopts :hi:t:a:b:v:r:g: opt; do
@@ -52,18 +53,19 @@ while getopts :hi:t:a:b:v:r:g: opt; do
 done
 shift "$((OPTIND-1))"
 
-printf "\\n### Building image ###\\n"
-printf "Docker image: $DOCKER_IMAGE\\n"
-printf "Docker tag: $DOCKER_TAG\\n"
-
-printf "Architecture: $ARCH\\n"
-printf "Baseimage branch: $BASEIMAGE_BRANCH\\n"
-printf "Image version: $VERSION\\n"
-printf "VCS reference: $VCS_REF\\n"
-printf "\\n"
+echo ""
+logTitle "Build parameters"
+logSubTitle "Docker image: $DOCKER_IMAGE"
+logSubTitle "Docker tag: $DOCKER_TAG"
+logSubTitle "Architecture: $ARCH"
+logSubTitle "Baseimage branch: $BASEIMAGE_BRANCH"
+logSubTitle "Image version: $VERSION"
+logSubTitle "VCS reference: $VCS_REF"
+echo ""
 
 BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
 
+logTitle "Start building"
 cmdBuilt="docker build"
 cmdBuilt+=" --build-arg BUILD_DATE=$BUILD_DATE"
 if [[ ! -z $ARCH ]]; then
@@ -80,5 +82,6 @@ if [[ ! -z $VCS_REF ]]; then
 fi
 cmdBuilt+=" --tag $DOCKER_IMAGE:$DOCKER_TAG-$ARCH"
 cmdBuilt+=" ."
-
 eval $cmdBuilt
+
+logNormal "Build done"

@@ -28,13 +28,36 @@ FROM edofede/nginx-php-fpm:<VERSION>
 ```
 
 ### Container creation
-You can simply create and start a Docker container from the [image on the Docker hub](https://hub.docker.com/r/edofede/nginx-php-fpm) by running:
+You can simply create and start a Docker container from the [image on the Docker hub](https://hub.docker.com/r/edofede/nginx-php-fpm)
+
+#### Dynamically publish HTTP port
+If you want to test the container and don't care about HTTP port mapping, you can use dynamic mapping:
 
 ```bash
-docker create --name nginx-php-fpm edofede/nginx-php-fpm:latest
+docker create \
+	--name nginx-php-fpm --publish-all \
+	edofede/nginx-php-fpm:latest
 docker start nginx-php-fpm
 ```
-Then you can launch bash or other commands inside:
+
+Then get the assigned port on the host with:
+
+```bash
+docker port nginx-php-fpm 80/tcp
+```
+
+#### Statically publish HTTP port
+If, instead, you want to map a specific port to the host, you can use static mapping:
+
+```bash
+docker create \
+	--name nginx-php-fpm --publish <host port>:80/tcp \
+	edofede/nginx-php-fpm:latest
+docker start nginx-php-fpm
+```
+
+#### Container local access
+After the container is started, you can launch bash or other commands inside:
 
 ```bash
 docker exec -ti nginx-php-fpm bash
@@ -50,7 +73,15 @@ docker run -ti --rm edofede/nginx-php-fpm:latest bash
 The entrypoint script (``` /entrypoint.sh ```) accepts arguments. These are launched on the container, **instead** of starting runit and related services (nginx and PHP-FPM are not started if you pass arguments via the entrypoint).
 
 ## Setup
-...to be completed...
+### Default configuration
+I've included a basic configuration that works for general needs. If you need particular setup, you can put nginx/PHP-FPM config files on a persisten volume and make your own setup.
+
+### Data volume
+The web server uses by default the ``` /var/www/ ``` directory as root folder, but I've not created a Volume mapping in the Dockerfile, to leave freedom of choice.  
+If you plan to use this image as a base image to develop your Webapp, you can simply declare the Volume for data persistance in your Dockerfile.
+
+### Test files
+Three test files are present inside ``` /var/www/ ``` folder. You can safely delete it, since are used just for automated test during deploy.
 
 ### Set timezone
 The image comes with tzdata already installed (and timzone setted to Europe/Rome).
