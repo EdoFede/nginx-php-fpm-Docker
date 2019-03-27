@@ -3,28 +3,30 @@
 source scripts/multiArchMatrix.sh
 source scripts/logger.sh
 
+CONTAINER="nginx-php-fpm-test"
+IMAGE="edofede/nginx-php-fpm"
 
 function cleanup () {
 	logSubTitle "Stopping test container"
-	docker stop nginx-php-fpm-test
+	docker stop $CONTAINER
 	logSubTitle "Removing test container"
-	docker rm nginx-php-fpm-test
+	docker rm $CONTAINER
 }
 
 echo ""
-logTitle "Testing image: edofede/nginx-php-fpm:$1"
+logTitle "Testing image: $IMAGE:$1"
 
 logSubTitle "Creating test container"
-docker create --name nginx-php-fpm-test --publish-all edofede/nginx-php-fpm:$1
+docker create --name $CONTAINER --publish-all $IMAGE:$1
 
 
 logSubTitle "Starting test container"
-docker start nginx-php-fpm-test
-sleep 2
+docker start $CONTAINER
+sleep 10
 
 
 logSubTitle "Checking syslog-ng startup"
-log=$(docker logs --tail 1 nginx-php-fpm-test |sed 's/.*\(syslog-ng starting up\).*/\1/')
+log=$(docker logs $CONTAINER 2>&1 |grep 'syslog-ng starting up' |sed 's/.*\(syslog-ng starting up\).*/\1/')
 if [[ "$log" != "syslog-ng starting up" ]]; then
 	logError "Error: syslog-ng not started"
 	logError "Aborting..."
@@ -35,10 +37,10 @@ logNormal "[OK] Test passed"
 
 
 logSubTitle "Getting published TCP port on host"
-webPort=$(docker port nginx-php-fpm-test 80/tcp |cut -d ':' -f2)
+webPort=$(docker port $CONTAINER 80/tcp |cut -d ':' -f2)
 if [[ -z $webPort ]]; then
 	logError "Error: unable to find published port"
-	logDetail "Docker port output: $(docker port nginx-php-fpm-test)"
+	logDetail "Docker port output: $(docker port $CONTAINER)"
 	logError "Aborting..."
 	cleanup
 	exit 1;
