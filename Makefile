@@ -3,7 +3,7 @@ default: list
 DOCKER_IMAGE ?= edofede/nginx-php-fpm
 
 ARCHS ?= amd64 arm32v6 arm32v7 i386 ppc64le
-BASEIMAGE_BRANCH ?= 2.0
+BASEIMAGE_BRANCH ?= 2.1
 
 GITHUB_TOKEN ?= "NONE"
 
@@ -20,17 +20,17 @@ list:
 	@printf "# Available targets: \\n"
 	@cat Makefile |sed '1d' |cut -d ' ' -f1 |grep : |grep -v -e '\t' -e '\.' |cut -d ':' -f1
 	@printf "\\n# Syntax: \\n"
-	@printf "\\tmake git_push \\ \\n\\t\\tCOMMENT=\"<commit description>\" \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)]\\n"
+	@printf "\\tmake git_push \\ \\n\\t\\tCOMMENT=\"<Commit description>\" \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)]\\n"
 	@printf "\\tmake git_fix_permission \\n"
-	@printf "\\tmake output \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\n"
-	@printf "\\tmake build \\ \\n\\t\\t[BRANCH=<Git destination branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\ \\n\\t\\t[ARCHS=<List of architectures to build> (default: amd64 arm32v6 arm32v7 i386 ppc64le)] \\ \\n\\t\\t[ALPINE_BRANCH=<Alpine linux version> (default: 3.9.2)] \\ \\n\\t\\t[GIT_COMMIT=<Git commit sha> (default: git rev-parse --short HEAD)] \\ \\n\\t\\t[GITHUB_TOKEN=<Github auth token for API>] \\n"
-	@printf "\\tmake run \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\n"
-	@printf "\\tmake debug \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\n"
-	@printf "\\tmake test \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\n"
-	@printf "\\tmake test_all \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\ \\n\\t\\t[ARCHS=<List of architectures to build> (default: amd64 arm32v6 arm32v7 i386 ppc64le)] \\n"
+	@printf "\\tmake output \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\n"
+	@printf "\\tmake build \\ \\n\\t\\t[BRANCH=<Git destination branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\ \\n\\t\\t[ARCHS=<List of architectures to build> (default: amd64 arm32v6 arm32v7 i386 ppc64le)] \\ \\n\\t\\t[BASEIMAGE_BRANCH=<Baseimage version> (default: $(BASEIMAGE_BRANCH))] \\ \\n\\t\\t[GIT_COMMIT=<Git commit sha> (default: git rev-parse --short HEAD)] \\ \\n\\t\\t[GITHUB_TOKEN=<Github auth token for API>] \\n"
+	@printf "\\tmake run \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\ \\n\\t\\t[ARCH=<Architecture> (default: $(ARCH))] \\n"
+	@printf "\\tmake debug \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\ \\n\\t\\t[ARCH=<Architecture> (default: $(ARCH))] \\n"
+	@printf "\\tmake test \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\n\\t\\t[ARCH=<Architecture> (default: $(ARCH))] \\n"
+	@printf "\\tmake test_all \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\ \\n\\t\\t[ARCHS=<List of architectures to build> (default: amd64 arm32v6 arm32v7 i386 ppc64le)] \\n"
 	@printf "\\tmake clean \\n"
-	@printf "\\tmake docker_push \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\n"
-	@printf "\\tmake docker_push_latest \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: \`git branch |grep \* |cut -d ' ' -f2\`)] \\n"
+	@printf "\\tmake docker_push \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\n"
+	@printf "\\tmake docker_push_latest \\ \\n\\t\\t[BRANCH=<GitHub branch> (default: `git branch |grep \* |cut -d ' ' -f2`)] \\n"
 
 
 git_push:
@@ -67,12 +67,12 @@ build:
 run:
 	@docker run --rm \
 		--publish-all \
-		$(DOCKER_IMAGE):$(DOCKER_TAG) &
+		$(DOCKER_IMAGE):$(DOCKER_TAG)-$(ARCH) &
 
 
 debug:
 	@docker run --rm -ti \
-		$(DOCKER_IMAGE):$(DOCKER_TAG) \
+		$(DOCKER_IMAGE):$(DOCKER_TAG)-$(ARCH) \
 		/bin/bash
 
 
