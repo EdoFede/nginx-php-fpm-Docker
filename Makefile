@@ -3,7 +3,7 @@ default: list
 DOCKER_IMAGE ?= edofede/nginx-php-fpm
 
 ARCHS ?= amd64 arm32v6 arm32v7 i386 ppc64le
-BASEIMAGE_BRANCH ?= 2.2
+BASEIMAGE_BRANCH ?= 2.3
 
 GITHUB_TOKEN ?= "NONE"
 
