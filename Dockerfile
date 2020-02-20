@@ -1,6 +1,5 @@
 ARG BASEIMAGE_BRANCH
-ARG ARCH
-FROM edofede/baseimage:$BASEIMAGE_BRANCH-$ARCH
+FROM edofede/baseimage:$BASEIMAGE_BRANCH
 
 # Install required software
 RUN	apk update && \
@@ -49,8 +48,8 @@ RUN	mkdir -p /run/php && \
 	chmod 755 /etc/sv/nginx/run && \
 	ln -sf /etc/sv/nginx /etc/service/
 
-ARG VERSION
 ARG BUILD_DATE
+ARG VERSION
 ARG VCS_REF
 
 LABEL 	maintainer="Edoardo Federici <hello@edoardofederici.com>" \
@@ -58,11 +57,11 @@ LABEL 	maintainer="Edoardo Federici <hello@edoardofederici.com>" \
 		org.label-schema.vendor="Edoardo Federici" \
 		org.label-schema.url="https://edoardofederici.com" \
 		org.label-schema.name="nginx-php-fpm" \
-		org.label-schema.description="Docker base image for nginx and PHP-FPM services" \
+		org.label-schema.description="Docker multiarch image for nginx and PHP-FPM services" \
 		org.label-schema.version=$VERSION \
 		org.label-schema.build-date=$BUILD_DATE \
 		org.label-schema.vcs-url="https://github.com/EdoFede/nginx-php-fpm-Docker" \
 		org.label-schema.vcs-ref=$VCS_REF \
-		org.label-schema.docker.cmd="docker create --name nginx-php-fpm edofede/nginx-php-fpm:latest"
+		org.label-schema.docker.cmd="docker create --name nginx-php-fpm --publish-all edofede/nginx-php-fpm:latest"
 
 EXPOSE 80
