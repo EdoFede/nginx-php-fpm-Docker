@@ -39,7 +39,7 @@ RUN	mkdir -p /run/php && \
 	chmod 755 /etc/sv/php-fpm/run && \
 	ln -sf /etc/sv/php-fpm /etc/service/ && \
 # Configure nginx service
-	sed -i '/^worker_processes auto;/a include /etc/nginx/modules/*.conf;' nginx.conf && \
+	sed -i '/^worker_processes auto;/a include /etc/nginx/modules/*.conf;' /etc/nginx/nginx.conf && \
 	mkdir -p /var/www && \
 	chown -R nginx:www-data /var/www && \
 	rm -rf /var/www/localhost && \
