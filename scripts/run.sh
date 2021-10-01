@@ -17,14 +17,14 @@ getQemu() {
 
 	cleanup
 	
-	if [ -z GITHUB_TOKEN ] || [ "$GITHUB_TOKEN" == "NONE" ]; then
+	if [ -z "$GITHUB_TOKEN" ] || [ "$GITHUB_TOKEN" == "NONE" ]; then
 		QEMU_RELEASE=$(curl -sS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 1 --retry-max-time 60 "https://api.github.com/repos/multiarch/qemu-user-static/releases/latest" |grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/')
 	else
 		QEMU_RELEASE=$(curl -u EdoFede:$GITHUB_TOKEN -sS --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 1 --retry-max-time 60 "https://api.github.com/repos/multiarch/qemu-user-static/releases/latest" |grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/')	
 	fi
 	
-	if [ -z QEMU_RELEASE ]; then
-		QEMU_RELEASE="v4.2.0-2"
+	if [ -z "$QEMU_RELEASE" ]; then
+		QEMU_RELEASE="v6.1.0-6"
 	fi
 	
 	for i in ${!PLATFORMS[@]}; do
@@ -36,6 +36,8 @@ getQemu() {
 	
 	if [ "$QEMU_ARCH" != "NONE" ]; then
 		mkdir -p build_tmp/qemu
+		QEMU_LINK="https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_RELEASE/qemu-$QEMU_ARCH-static.tar.gz"
+		logDetail "Downloading qemu static from: $QEMU_LINK"
 
 		curl -sS -L \
 			--connect-timeout 5 \
@@ -43,7 +45,7 @@ getQemu() {
 			--retry 5 \
 			--retry-delay 0 \
 			--retry-max-time 60 \
-			https://github.com/multiarch/qemu-user-static/releases/download/$QEMU_RELEASE/qemu-$QEMU_ARCH-static.tar.gz \
+			$QEMU_LINK \
 			-o build_tmp/qemu-$QEMU_ARCH-static.tar.gz && \
 		tar zxvf \
 			build_tmp/qemu-*-static.tar.gz \
