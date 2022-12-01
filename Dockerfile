@@ -7,15 +7,15 @@ RUN	apk update && \
 		openssl \
 		nginx \
 		nginx-mod-http-dav-ext \
-		php7 \
-		php7-calendar \
-		php7-common \
-		php7-curl \
-		php7-fpm \
-		php7-json \
-		php7-opcache \
-		php7-posix \
-		php7-xml && \
+		php81 \
+		php81-calendar \
+		php81-common \
+		php81-curl \
+		php81-fpm \
+		php81-json \
+		php81-opcache \
+		php81-posix \
+		php81-xml && \
 	rm -rf /var/cache/apk/*
 
 COPY imageFiles/ /
@@ -26,16 +26,16 @@ RUN	mkdir -p /run/php && \
 	sed -i \
 		-e "s/;daemonize = yes/daemonize = no/" \
 		-e "s/;log_level = notice/log_level = warning/" \
-		-e "s/;error_log = log\\/php7\\/error.log/error_log = syslog/" \
-		/etc/php7/php-fpm.conf && \
+		-e "s/;error_log = log\\/php81\\/error.log/error_log = syslog/" \
+		/etc/php81/php-fpm.conf && \
 	sed -i \
-		-e "s/listen = 127.0.0.1:9000/listen = \\/run\\/php\\/php7.0-fpm.sock/" \
+		-e "s/listen = 127.0.0.1:9000/listen = \\/run\\/php\\/php8.1-fpm.sock/" \
 		-e "s/;listen.owner = nobody/listen.owner = nobody/" \
 		-e "s/;listen.group = nobody/listen.group = www-data/" \
 		-e "s/user = nobody/user = nginx/" \
 		-e "s/group = nobody/group = www-data/" \
 		-e "s/;clear_env = no/clear_env = no/" \
-		/etc/php7/php-fpm.d/www.conf && \
+		/etc/php81/php-fpm.d/www.conf && \
 	chmod 755 /etc/sv/php-fpm/run && \
 	ln -sf /etc/sv/php-fpm /etc/service/ && \
 # Configure nginx service

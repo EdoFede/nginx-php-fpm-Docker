@@ -14,7 +14,7 @@ done
 
 logger -t runit "Starting PHP-FPM"
 
-CMD=/usr/sbin/php-fpm7
+CMD=/usr/sbin/php-fpm81
 PID=/run/php/php-fpm.pid
 
 exec ${CMD} --pid $PID
